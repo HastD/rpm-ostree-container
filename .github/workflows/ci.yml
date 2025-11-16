@@ -1,0 +1,61 @@
+name: CI checks
+
+on:
+  schedule:
+    - cron: "00 2 * * *" # build at 2:00 UTC every day
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["**"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+jobs:
+  try-build:
+    name: Build and test image
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Install podman
+        run: sudo apt install podman
+
+      - name: Build image
+        run: podman build -t rpm-ostree-container .
+
+      - name: Check rpm-ostree present
+        run: |
+          set -euo pipefail
+          podman run --rm rpm-ostree-container:latest rpm-ostree --version | grep -Fq 'Version:'
+
+      - name: Test container storage
+        run: |
+          set -euo pipefail
+          storage_dir=$(podman info --format='{{.Store.GraphRoot}}')
+          podman run --privileged --rm \
+            -v "${storage_dir}:${storage_dir}" \
+            rpm-ostree-container:latest \
+            /with-storage.sh "${storage_dir}" podman images \
+            | grep -F 'rpm-ostree-container'
+
+  shellcheck:
+    name: ShellCheck
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Install ShellCheck
+        run: sudo apt install shellcheck
+
+      - name: Checkout repository
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: false
+
+      - name: Run ShellCheck
+        run: find . -type f -name '*.sh' -execdir shellcheck '{}' +

@@ -18,4 +18,4 @@ else
     printf '[storage]\ngraphroot = "%s"\n' "${storage_path}" > "${storage_conf}"
 fi
 
-rpm-ostree "$@"
+exec "$@"

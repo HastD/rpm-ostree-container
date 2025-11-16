@@ -4,4 +4,4 @@ FROM quay.io/podman/stable:latest
 
 RUN dnf install -y rpm-ostree && dnf clean all
 
-COPY --chmod=755 rpm-ostree-run.sh /rpm-ostree-run.sh
+COPY --chmod=755 with-storage.sh /with-storage.sh

@@ -2,9 +2,6 @@
 
 FROM quay.io/podman/stable
 
-RUN <<EOF
-dnf install -y rpm-ostree
-dnf clean all
-EOF
+RUN dnf install -y rpm-ostree && dnf clean all
 
 COPY --chmod=755 rpm-ostree-run.sh /rpm-ostree-run.sh

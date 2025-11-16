@@ -19,6 +19,7 @@ concurrency:
 defaults:
   run:
     shell: bash
+
 jobs:
   try-build:
     name: Build and test image

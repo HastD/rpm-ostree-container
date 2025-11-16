@@ -2,7 +2,7 @@ name: 'zizmor: GitHub Actions Security Analysis'
 
 on:
   push:
-    branches: ["main"]
+    branches: ["latest"]
   pull_request:
     branches: ["**"]
 

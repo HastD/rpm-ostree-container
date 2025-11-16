@@ -4,7 +4,7 @@ on:
   schedule:
     - cron: "00 2 * * *" # build at 2:00 UTC every day
   push:
-    branches: ["main"]
+    branches: ["latest"]
   pull_request:
     branches: ["**"]
   workflow_dispatch:

@@ -45,10 +45,8 @@ jobs:
         run: |
           set -euo pipefail
           storage_dir=$(podman info --format='{{.Store.GraphRoot}}')
-          podman run --privileged --rm \
-            -v "${storage_dir}:${storage_dir}" \
-            rpm-ostree-container:latest \
-            /with-storage.sh "${storage_dir}" podman images \
+          podman run --privileged --rm -v "${storage_dir}:${storage_dir}" \
+            rpm-ostree-container:latest --storage="${storage_dir}" podman images \
             | grep -F 'rpm-ostree-container'
 
   shellcheck:
